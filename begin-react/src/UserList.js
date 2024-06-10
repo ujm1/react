@@ -41,4 +41,16 @@ function UserList() {
 
 }
 
-export {UserList};
+function UserListTwo({users}) { /* 이 users는 App.js에서 users로 보낸,
+App.js에서 usersTwo로 준 배열이 되고 */
+
+    return  (
+        <>
+        {users.map(user=> /* 배열 안 각각의 객체이며, */
+        <User user={user} /* 이건 위에서의 User user */
+        key={user.id} />)}
+        </>
+    )
+}
+
+export {UserList, UserListTwo};

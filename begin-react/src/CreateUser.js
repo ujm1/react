@@ -17,6 +17,9 @@ function CreateUser({username, email, onChange, onCreate}) {
         value={email}
       />
       <button onClick={onCreate}>등록</button>
+        
         </>
     )
 }
+
+export default React.memo(CreateUser);

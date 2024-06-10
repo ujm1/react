@@ -9,7 +9,8 @@ useState } from "react";
     const onChange=(e)=>{
         setText(e.target.value);
     /* input의 value를 text라고 정의, 
-    그래서 이벤트가 발생했을 때 input의 value를 text로 set한 것 */
+    그래서 이벤트가 발생했을 때 input의 value를 text로 set한 것
+    다시 말해 input의 value인 text로(=이벤트의 타겟이 value로) Text라는 스테이트를 설정한다. 변경한다. 라는 것 */
     }
 
     const onReset=()=>{
@@ -43,9 +44,10 @@ useState } from "react";
     const {name, nickname}=input; //input 정의(객체)
 
     const onChange=(e)=>{ 
-    const {value, name} = e.target; //추출
+    const {value, name} = e.target; //input의 태그인 value와 name을 추출
     setInput({...input, [name]:value}) //객체 수정이므로 
     //input[name]=value; 이런 식으로 직접 하지 말고 복사
+    /* input을 가져오고, 거기의 (태그인) [name]이 value가 되도록 set한다.. */
     //다시 말해 이름에선 input의 name이 value가 되는 거고
     //닉네임input에선 input의 name이 nickname이므로 input[nickname]이 value가 되는 셈
     }
@@ -74,15 +76,15 @@ useState } from "react";
 
     const nameInput=useRef(); //특정 dom 선택에 사용
     
-    const {name, nickname}=input;
+    const {name, nickname}=input; /* 노란색 {}로 감싸진 것 */
 
     const onChange=(e)=>{
-        const {value, name}=e.target;
+        const {value, name}=e.target; /* 파란색 input 속성 */
         setInput({...input, [name]:value})
     }
 
     const onReset=()=>{setInput({name:'', nickname:''});
-    nameInput.current.focus();
+    nameInput.current.focus(); /* 여기서 Ref 사용 */
     }
 
     return (
