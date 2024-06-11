@@ -1,6 +1,7 @@
 import React from "react";
 import { MdDelete, MdDone } from "react-icons/md";
 import styled, { css } from "styled-components";
+import { useTodoDispatch } from "../TodoContext";
 
 const Remove=styled.div`
  display: flex;
@@ -60,15 +61,25 @@ flex: 1;
 
 function TodoItem({id, done, text}) { /* 리스트에서 아이템 사용,
                                         text와 done을 가져옴 */
+
+    const dispatch=useTodoDispatch();
+    const onToggle=()=>dispatch({type:'TOGGLE', id}); 
+    /* 실질적으로 reducer에서 지정한 action 수행 */
+    const onRemove=()=>dispatch({type:'REMOVE', id});
+
     return (
         <TodoItemBlock> {/* 리스트블락 안엔 각각 아이템블락으로 이루어져있음 */}
-            <CheckCircle done={done}>{done&&<MdDone/>}</CheckCircle>
+            <CheckCircle done={done} onClick={onToggle}>
+              {done&&<MdDone/>}
+            </CheckCircle>
             <Text done={done}>{text}</Text>
-            <Remove>
+            <Remove onClick={onRemove}>
                 <MdDelete/>
             </Remove>
         </TodoItemBlock>
     )
 }
 
-export default TodoItem;
+/* export default TodoItem; */
+export default React.memo(TodoItem);
+/* 다른 항목이 업데이트 될 때, 불필요한 렌더링 방지 */
