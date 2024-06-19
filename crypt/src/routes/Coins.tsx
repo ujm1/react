@@ -25,6 +25,7 @@ const Coin=styled.li`
     a {
         padding: 20px; //대충 더 넓혀져 보인다는 뜻
         transition: color 0.2s ease in;
+        align-items: center;
         display: block; //이거 안하면 인라인이어서 글짜부분까지만 클릭 가능
         //이걸 해줘야 block으로 바뀌어서 전체 넓이 먹어서 글자 없는 부분까지 클릭 가능
     }
@@ -46,6 +47,12 @@ const Loader=styled.span`
     display: block;
 `;
 
+const Img=styled.img`
+    width:25px;
+    height:25px;
+    margin-right: 10px;
+    `;
+
 interface CoinInterface {
     id: string,
     name: string,
@@ -61,6 +68,7 @@ function Coins() {
     const [coins, setCoins] = useState<CoinInterface[]>([]); //array는 타입 이렇게 해줘야
 
     const [loading, setLoading] = useState(true);
+
 
     useEffect(()=>{
         (async()=> {
@@ -83,8 +91,13 @@ function Coins() {
                 <CoinsList>
                     {coins.map((coin)=>(
                         <Coin key={coin.id}> {/* li와 key가 나오며, 단지 Coin으로 스타일링 */}
-                            <img src={`https://cryptocurrencyliveprices.com/img/${coin.id}.png`}/>
-                            <Link to={`/${coin.id}`}>{coin.name} &rarr;</Link> {/* 그 리스트마다 이름 및 화살표에 Link 넣은 것 */}
+                            <Link to={`/${coin.id}`} 
+                            state= {{name:coin.name, rank:coin.rank}}> {/* 객체로 보냄 */}
+                            {/* 이 state는 Coins를 열때, 그리고 각각의 coin을 열 때. 두 번 생성된다. */}
+                            <Img src={`https://cryptocurrencyliveprices.com/img/${coin.id}.png`}/>
+                            {coin.name} &rarr;
+                            </Link>
+                            {/* <Link to={`/${coin.id}`}>{coin.name} &rarr;</Link> */} 
                         </Coin>
                     ))}
                     {/* Router에서 /:coinId로 보냈으므로 여기선, 이 Coin은 위의 스타일링 Coin임 */}
