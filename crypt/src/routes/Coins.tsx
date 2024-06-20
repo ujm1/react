@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { fetchCoins } from "../api";
 
 const Container=styled.div`
     padding: 0px 10px; /* 위아래 0 좌우 10 */
@@ -65,7 +67,7 @@ interface CoinInterface {
 
 function Coins() {
 
-    const [coins, setCoins] = useState<CoinInterface[]>([]); //array는 타입 이렇게 해줘야
+/*     const [coins, setCoins] = useState<CoinInterface[]>([]); //array는 타입 이렇게 해줘야
 
     const [loading, setLoading] = useState(true);
 
@@ -77,9 +79,12 @@ function Coins() {
             setCoins(json.slice(0,100)); //json 수만개 가져와서 그 중 100개만 잘라 스테이트화한다는것
             setLoading(false);
         })(); //즉시실행함수
-    }, []);
+    }, []); */
 
-    console.log(coins);
+    const {isLoading, data}=useQuery<CoinInterface[]>("allCoins", fetchCoins);
+     //api 폴더 안에 선언한 fetchCoins라는 함수 호출, 호출되면 isLoading, 
+     //호출 끝나면 return된 결과물이 data에
+     //아울러 data의 타입을 지정해줘야하므로 <> 안에 넣음
 
     return (
         <>
@@ -87,9 +92,9 @@ function Coins() {
                 <Header>
                     <Title>코인</Title>
                 </Header>
-                { loading ? (<Loader> "Loading..." </Loader> ): 
+                { isLoading ? (<Loader> "Loading..." </Loader> ): 
                 <CoinsList>
-                    {coins.map((coin)=>(
+                    {data?.slice(0,100).map((coin)=>(
                         <Coin key={coin.id}> {/* li와 key가 나오며, 단지 Coin으로 스타일링 */}
                             <Link to={`/${coin.id}`} 
                             state= {{name:coin.name, rank:coin.rank}}> {/* 객체로 보냄 */}

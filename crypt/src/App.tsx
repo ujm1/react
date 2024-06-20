@@ -1,10 +1,12 @@
-import React from 'react';
-import Router from './Router';
-import { createGlobalStyle } from 'styled-components';
-import { RouterProvider } from 'react-router-dom';
-import router from './Router';
+import React from "react";
+import Router from "./Router";
+import { createGlobalStyle } from "styled-components";
+import { RouterProvider } from "react-router-dom";
+import router from "./Router";
+import { ReactQueryDevtools } from "react-query/devtools";
+import { QueryClient, QueryClientProvider } from "react-query";
 
-const GlobalStyle=createGlobalStyle`
+const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
@@ -58,8 +60,8 @@ table {
 }
 body {
   font-family: 'Source Sans Pro', sans-serif; //위에서 import 한 source sans pro가 로드되지 않을 때 sans-serif를 사용한다는 의미
-  background-color: ${(props)=>props.theme.bgColor};
-  color:${(props)=>props.theme.textColor};
+  background-color: ${(props) => props.theme.bgColor};
+  color:${(props) => props.theme.textColor};
 }
 a{
   text-decoration: none;
@@ -67,13 +69,20 @@ a{
 }
 `;
 
+const queryClient = new QueryClient();
+
 function App() {
   return (
-   <>
-   <GlobalStyle/>
-    <RouterProvider router={router}/>
-   </>
+    <>
+      <QueryClientProvider client={queryClient}>
+        <GlobalStyle />
+        <RouterProvider router={router} />
+        <ReactQueryDevtools initialIsOpen={true} />
+      </QueryClientProvider>
+    </>
   );
 }
+
+
 
 export default App;
