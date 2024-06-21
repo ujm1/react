@@ -1,13 +1,5 @@
-import React, { useState } from "react";
-import Router from "./Router";
-import { ThemeProvider, createGlobalStyle } from "styled-components";
-import { RouterProvider } from "react-router-dom";
-import router from "./Router";
-import { ReactQueryDevtools } from "react-query/devtools";
-import { QueryClient, QueryClientProvider } from "react-query";
-import { darkTheme, lightTheme } from "./theme";
-import { useRecoilValue } from "recoil";
-import { isDarkAtom } from "./atom";
+import { createGlobalStyle } from "styled-components";
+import ToDoList from "./ToDoList";
 
 const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
@@ -72,19 +64,14 @@ a{
 }
 `;
 
-const queryClient = new QueryClient();
 
 function App() {
-  const isDark=useRecoilValue(isDarkAtom);
   return (
     <>
-        <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
-          <QueryClientProvider client={queryClient}>
+      
             <GlobalStyle />
-            <RouterProvider router={router} />
-            <ReactQueryDevtools initialIsOpen={true} />
-          </QueryClientProvider>
-        </ThemeProvider>
+            <ToDoList/>
+           
     </>
   );
 }

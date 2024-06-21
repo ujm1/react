@@ -5,6 +5,7 @@ import Price from "./Price";
 import Chart from "./Chart";
 import { useQuery } from "react-query";
 import { fecthTickersInfo, fetchCoinInfo } from "../api";
+import {Helmet} from 'react-helmet';
 
 interface RouteState {
     name?:string;
@@ -89,23 +90,27 @@ function Coin() {
     const chartMatch=useMatch("/coinId/chart");
 
     const {isLoading : infoLoading, data: infoData}=useQuery<IInfoData>(["info",coinId],()=>fetchCoinInfo(coinId));
-    const {isLoading :tickersLoading, data:tickersData}=useQuery<IPriceData>(["tickers",coinId],()=>fecthTickersInfo(coinId));
+    const {isLoading :tickersLoading, data:tickersData}=useQuery<IPriceData>(
+        ["tickers",coinId],()=>fecthTickersInfo(coinId)); //5초마다 다시 패치
 
     const loading=infoLoading || tickersLoading;
  
     return (
         <> 
+        <Helmet>
+            <title>
+           asdf 
+            </title>
+        </Helmet>
         <h1>Coin : {coinId? coinId: null}</h1> {/* to로 보낸 param */}
 
             {state?.name ? '이름:'+state?.name : loading? "Loading" : infoData?.name} 
 
 
             {'랭크:'+state?.rank}
+            <br></br>
+            {'Price:$'+tickersData?.quotes.USD.price.toFixed(2)}
 
-            {tickersData?.quotes.USD.ath_date}
-
-            {tickersData?.total_supply}
-            {tickersData?.max_supply}
             <br></br><br></br>
             { state && coinId ? ( <>
             <Link to={`/${coinId}/chart`} state= {{name:state.name, rank:state.rank}}>Chart</Link> 

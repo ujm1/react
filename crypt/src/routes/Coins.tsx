@@ -3,6 +3,9 @@ import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { fetchCoins } from "../api";
+import { useSetRecoilState } from "recoil";
+import { isDarkAtom } from "../atom";
+
 
 const Container=styled.div`
     padding: 0px 10px; /* 위아래 0 좌우 10 */
@@ -67,30 +70,22 @@ interface CoinInterface {
 
 function Coins() {
 
-/*     const [coins, setCoins] = useState<CoinInterface[]>([]); //array는 타입 이렇게 해줘야
-
-    const [loading, setLoading] = useState(true);
-
-
-    useEffect(()=>{
-        (async()=> {
-            const response = await fetch("https://api.coinpaprika.com/v1/coins");
-            const json = await response.json();
-            setCoins(json.slice(0,100)); //json 수만개 가져와서 그 중 100개만 잘라 스테이트화한다는것
-            setLoading(false);
-        })(); //즉시실행함수
-    }, []); */
 
     const {isLoading, data}=useQuery<CoinInterface[]>("allCoins", fetchCoins);
      //api 폴더 안에 선언한 fetchCoins라는 함수 호출, 호출되면 isLoading, 
      //호출 끝나면 return된 결과물이 data에
      //아울러 data의 타입을 지정해줘야하므로 <> 안에 넣음
 
+     const setDarkAtom=useSetRecoilState(isDarkAtom);
+
+     const toggleDarkAtom=()=>setDarkAtom((prev)=>!prev);
+
     return (
         <>
             <Container>
                 <Header>
                     <Title>코인</Title>
+                    <button onClick={toggleDarkAtom}>Toggle</button>
                 </Header>
                 { isLoading ? (<Loader> "Loading..." </Loader> ): 
                 <CoinsList>
