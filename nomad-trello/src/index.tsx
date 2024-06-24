@@ -1,5 +1,9 @@
-import { createGlobalStyle } from "styled-components";
-import ToDoList from "./components/ToDoList";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import { RecoilRoot } from "recoil";
+import { ThemeProvider, createGlobalStyle } from "styled-components";
+import { darkTheme } from "./theme";
 
 const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
@@ -54,26 +58,26 @@ table {
   box-sizing: border-box;
 }
 body {
-  font-family: 'Source Sans Pro', sans-serif; //위에서 import 한 source sans pro가 로드되지 않을 때 sans-serif를 사용한다는 의미
-  background-color: ${(props) => props.theme.bgColor};
-  color:${(props) => props.theme.textColor};
+  font-weight: 300;
+  font-family: 'Source Sans Pro', sans-serif;
+  background-color:${(props) => props.theme.bgColor};
+  color:black;
+  line-height: 1.2;
 }
-a{
-  text-decoration: none;
-  color:inherit; //앵커의 글씨색을 부모에게서 가져옴
+a {
+  text-decoration:none;
+  color:inherit;
 }
 `;
 
-
-function App() {
-  return (
-    <>
-      
-            <GlobalStyle />
-            <ToDoList/>
-           
-    </>
-  );
-}
-
-export default App;
+const root = ReactDOM.createRoot(
+  document.getElementById("root") as HTMLElement
+);
+root.render(
+  <RecoilRoot>
+    <ThemeProvider theme={darkTheme}>
+      <GlobalStyle />
+      <App />
+    </ThemeProvider>
+  </RecoilRoot>
+);
