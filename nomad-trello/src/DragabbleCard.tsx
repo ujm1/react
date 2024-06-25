@@ -1,3 +1,4 @@
+import React from "react";
 import { Draggable } from "react-beautiful-dnd";
 import styled from "styled-components";
 
@@ -9,15 +10,16 @@ const Card = styled.div`
 `;
 
 interface IDragabbleCardProps {
-    todo : string;
+    todoId : number;
+    todoText: string;
     index : number;
 }
 
-function DragabbleCard({todo, index}:IDragabbleCardProps) {
+function DragabbleCard({todoId, todoText, index}:IDragabbleCardProps) {
 
     return (
         <>
-        <Draggable key={todo} draggableId={todo} index={index}> 
+        <Draggable draggableId={todoId+""} index={index}> 
                       {(magic) => (
                         <Card
                           ref={magic.innerRef}
@@ -25,7 +27,7 @@ function DragabbleCard({todo, index}:IDragabbleCardProps) {
                           {...magic.dragHandleProps}
                         >
                           {/* 이 dragHandleProps 가 붙어있는 <> 만 드래그가 가능 */}
-                          {todo}
+                          {todoText}
                         </Card>
                       )}
                     </Draggable>
@@ -33,4 +35,5 @@ function DragabbleCard({todo, index}:IDragabbleCardProps) {
     );
 };
 
-export default DragabbleCard;
+/* export default DragabbleCard; */
+export default React.memo(DragabbleCard);

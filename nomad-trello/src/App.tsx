@@ -1,13 +1,19 @@
 import React from "react";
-import { DragDropContext, Draggable, DropResult, Droppable } from "react-beautiful-dnd";
+import {
+  DragDropContext,
+  Draggable,
+  DropResult,
+  Droppable,
+} from "react-beautiful-dnd";
 import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { todoState } from "./atoms";
 import DragabbleCard from "./DragabbleCard";
+import Board from "./Board";
 
 const Wrapper = styled.div`
   display: flex;
-  max-width: 480px;
+  max-width: 680px;
   width: 100%;
   margin: 0 auto; //가운데
   justify-content: center;
@@ -18,49 +24,52 @@ const Wrapper = styled.div`
 const Boards = styled.div`
   display: grid;
   width: 100%;
-  grid-template-columns: repeat(1, 1fr); //뭐 3개의 board를 만든다 그런거같은데
+  gap: 10px;
+  grid-template-columns: repeat(3, 1fr); //뭐 3개의 board를 만든다 그런거같은데
 `;
-
-const Board = styled.div`
-  padding: 20px 10px; //좌우
-  padding-top: 30px;
-  background-color: ${(props) => props.theme.boardColor}; //theme.ts에서..
-  border-radius: 5px;
-  min-height: 200px;
-`;
-
-
-
 
 function App() {
-  const [todos,setTodos]= useRecoilState(todoState);
-  const onDragEnd = ({draggableId, destination, source}: DropResult) => { 
-    //destination은 내가 드래그로 옮긴 위치, source는 기존 위치를 의미
-    if(!destination) return; //자리 이동 안할때(같은위치) 
-    setTodos((oldTodos)=>{
-      const copyTodos=[...oldTodos]; //요소(내용물을) 언팩하고 다시 배열에 담음(재포장, 즉 복사)
-      copyTodos.splice(source.index,1); //원래 위치 없앰
-      copyTodos.splice(destination?.index,0, draggableId); //이 draggableId는, Draggable 객체,
-      //즉 사용자가 드래그하는 객체의 draggableId인 todo 객체를 의미한다. 
-      return copyTodos;
-    });
-
+  const [todos, setTodos] = useRecoilState(todoState);
+  const onDragEnd = ({ draggableId, destination, source }: DropResult) => {
+    if (!destination) return; 
+    if(destination.droppableId===source.droppableId) { 
+      setTodos((oldTodos)=>{
+        const copyTodos=[...oldTodos[source.droppableId]]; //동일
+        const taskObj=copyTodos[source.index]; //객체...
+        
+        //아래는 동일
+        copyTodos.splice(source.index, 1);
+        copyTodos.splice(destination?.index, 0, taskObj); //draggableId 지우고 taskObj 넣음
+        return {...oldTodos, //기존거 그대로에
+          [source.droppableId] : copyTodos, //boardId 부분만 변경
+        };
+      });
+    }
+    if(destination.droppableId!==source.droppableId) { 
+      setTodos((oldTodos)=>{  //이해하기 어려우면 oldBoards로 이해.
+        const copyTodos=[...oldTodos[source.droppableId]]; //기존 배열들(todos 자체) 복사
+        const taskObj=copyTodos[source.index];
+        const copyTodos2=[...oldTodos[destination.droppableId]]; //옮길곳의 todos
+        copyTodos.splice(source.index, 1); //동일. 기존의 todos의 인덱스에서 하나를 없앤다
+        copyTodos2.splice(destination?.index, 0, taskObj); //2로 ..
+        //의미는 동일. 옮기려는 todos의 인덱스, 0개 삭제, todo 추가.
+        
+        return {
+          ...oldTodos, //마찬가지로 기존꺼 그대로 쓰는데..
+          [source.droppableId] : copyTodos, //옮기려는 droppableId (=boardId) 변경
+          [destination.droppableId] : copyTodos2, //옮겨지는 boardId 의 배열 변경
+        };
+      });
+    }
   };
   return (
     <>
       <DragDropContext onDragEnd={onDragEnd}>
         <Wrapper>
           <Boards>
-            <Droppable droppableId="one">
-              {(magic) => (
-                <Board ref={magic.innerRef} {...magic.droppableProps}>
-                  {todos.map((todo, index) => (
-                    <DragabbleCard todo={todo} index={index} key={todo}/>
-                  ))}
-                  {magic.placeholder} {/* 벗어나도 리스트 크기 유지되게 */}
-                </Board>
-              )}
-            </Droppable>
+            {Object.keys(todos).map((boardId) => (
+              <Board boardId={boardId} key={boardId} todos={todos[boardId]} />
+            ))}
           </Boards>
         </Wrapper>
       </DragDropContext>
